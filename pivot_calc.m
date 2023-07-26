@@ -1,4 +1,4 @@
-// Fibonacci Pivot Lines Indicator
+// Fibonacci Pivot Lines Indicator for offline charts
 #property indicator_chart_window
 
 // User inputs
@@ -27,27 +27,39 @@ int init() {
     SetIndexStyle(1, DRAW_LINE, 1, clrPurple);
     SetIndexStyle(2, DRAW_LINE, 1, clrGreen);
     SetIndexStyle(3, DRAW_LINE, 1, clrRed);
-    SetIndexStyle(4, DRAW_LINE, 1, clrBlue);  // Color for Torquees
+    SetIndexStyle(4, DRAW_LINE, 1, <<INSERT_COLOR_HERE>>);  // Color for Torquees
     SetIndexStyle(5, DRAW_LINE, 1, clrPurple);
     SetIndexStyle(6, DRAW_LINE, 1, clrGreen);
     SetIndexStyle(7, DRAW_LINE, 1, clrRed);
-    SetIndexStyle(8, DRAW_LINE, 1, clrBlue);  // Color for Torquees
+    SetIndexStyle(8, DRAW_LINE, 1, <<INSERT_COLOR_HERE>>);  // Color for Torquees
     
     return(0);
 }
 
 int start() {
-    double pivot = (HIGH + LOW + CLOSE) / 3;
-    double r1 = 2 * pivot - LOW;
-    double s1 = 2 * pivot - HIGH;
-    double r2 = pivot + (HIGH - LOW) * 0.618;
-    double s2 = pivot - (HIGH - LOW) * 0.618;
-    double r3 = pivot + (HIGH - LOW) * 0.786;
-    double s3 = pivot - (HIGH - LOW) * 0.786;
-    double r4 = pivot + (HIGH - LOW);
-    double s4 = pivot - (HIGH - LOW);
-    
-    for(int i = 0; i < Bars; i++) {
+    int counted_bars = IndicatorCounted();
+    if (counted_bars < 0) return(-1);
+    if (counted_bars > 0) counted_bars--;
+    int limit = Bars - counted_bars;
+
+    for(int i = 0; i < limit; i++) {
+        if(i == 0){
+            OPEN = iOpen(Symbol(), 0, i);
+            HIGH = iHigh(Symbol(), 0, i);
+            LOW = iLow(Symbol(), 0, i);
+            CLOSE = iClose(Symbol(), 0, i);
+        }
+
+        double pivot = (HIGH + LOW + CLOSE) / 3;
+        double r1 = 2 * pivot - LOW;
+        double s1 = 2 * pivot - HIGH;
+        double r2 = pivot + (HIGH - LOW) * 0.618;
+        double s2 = pivot - (HIGH - LOW) * 0.618;
+        double r3 = pivot + (HIGH - LOW) * 0.786;
+        double s3 = pivot - (HIGH - LOW) * 0.786;
+        double r4 = pivot + (HIGH - LOW);
+        double s4 = pivot - (HIGH - LOW);
+
         MedianPivot[i] = pivot;
         R1[i] = r1;
         S1[i] = s1;
